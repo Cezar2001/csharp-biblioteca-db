@@ -22,6 +22,28 @@ namespace csharp_biblioteca_db
             }
             return conn;
         }
+
+        internal static long GetUniqueId()
+        {
+            var conn = Connect();
+            if (conn == null)
+                throw new Exception("Unable to connect to the dabatase");
+
+            string cmd = "UPDATE codice_unico SET codice = codice + 1 OUTPUT INSERTED.codice";
+            long id;
+
+            using (SqlCommand select = new SqlCommand(cmd, conn))
+            {
+                using (SqlDataReader reader = select.ExecuteReader())
+                {
+                    reader.Read();
+                    id = reader.GetInt64(0);
+                }
+            }
+            conn.Close();
+            return id;
+        }
+
         internal static int scaffaleAdd(string nuovo)
         {
             var conn = Connect();
@@ -76,6 +98,23 @@ namespace csharp_biblioteca_db
 
         //insert into Autori_Documenti(codice_autore, codice_documento) values(1000, 1)
 
+        internal static bool DoSql(SqlConnection conn, string sql)
+        {
+            using (SqlCommand sqlCmd = new SqlCommand(sql, conn))
+            {
+                try
+                {
+                    sqlCmd.ExecuteNonQuery();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return false;
+                }
+            }
+        }
+
         internal static int libroAdd(Libro libro, List<Autore> lAutori)
         {
             //devo collegarmi e inviare un comando di insert del nuovo scaffale
@@ -84,6 +123,11 @@ namespace csharp_biblioteca_db
             {
                 throw new System.Exception("Unable to connect to database");
             }
+
+            var ok = DoSql(conn, "begin transaction");
+            if (!ok)
+                throw new System.Exception("Errore in begin transaction");
+
             var cmd = string.Format(@"insert into Documenti(codice, Titolo, Settore, Stato, Tipo, Scaffale)
                 VALUES({0}, '{1}', '{2}', '{3}', 'LIBRO', '{4}')", libro.Codice,libro.Titolo,libro.Settore,libro.Stato.ToString(),libro.Scaffale.Numero);
             using (SqlCommand insert = new SqlCommand(cmd, conn))
@@ -92,11 +136,16 @@ namespace csharp_biblioteca_db
                 {
                     var numrows = insert.ExecuteNonQuery();
                     if (numrows != 1)
+                    {
+                        conn.Close();
                         throw new System.Exception("Valore di ritorno errato prima query");
+                    }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    DoSql(conn, "rollback transaction");
+                    conn.Close();
                     return 0;
                 }
             }
@@ -107,11 +156,16 @@ namespace csharp_biblioteca_db
                 {
                     var numrows = insert.ExecuteNonQuery();
                     if (numrows != 1)
+                    {
+                        conn.Close();
                         throw new System.Exception("Valore di ritorno errato seconda query");
+                    }
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex.Message);
+                    DoSql(conn, "rollback transaction");
+                    conn.Close();
                     return 0;
                 }
             }
@@ -125,11 +179,17 @@ namespace csharp_biblioteca_db
                     {
                         var numrows = insert.ExecuteNonQuery();
                         if (numrows != 1)
+                        {
+                            DoSql(conn, "rollback transaction");
+                            conn.Close();
                             throw new System.Exception("Valore di ritorno errato terza query");
+                        }
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
+                        DoSql(conn, "rollback transaction");
+                        conn.Close();
                         return 0;
                     }
                 }
@@ -144,16 +204,23 @@ namespace csharp_biblioteca_db
                     {
                         var numrows = insert.ExecuteNonQuery();
                         if (numrows != 1)
+                        {
+                            DoSql(conn, "rollback transaction");
+                            conn.Close();
                             throw new System.Exception("Valore di ritorno errato seconda query");
+                        }
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
+                        DoSql(conn, "rollback transaction");
                         conn.Close();
                         return 0;
                     }
                 }
             }
+            DoSql(conn, "commit transaction");
+            conn.Close();
             return 0;
         }
 

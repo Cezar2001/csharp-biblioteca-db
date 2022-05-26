@@ -32,7 +32,7 @@ namespace csharp_biblioteca_db
                 db.scaffaleAdd(nuovo.Numero);
         }
 
-        public void AggiungiLibro(int sCodice, string sTitolo, string sSettore, int iNumPagine, string sScaffale, List<Autore> lListaAutori)
+        public void AggiungiLibro(long sCodice, string sTitolo, string sSettore, int iNumPagine, string sScaffale, List<Autore> lListaAutori)
         {
             Libro MioLibro = new Libro(sCodice, sTitolo, sSettore, iNumPagine, sScaffale);
             MioLibro.Stato = Stato.Disponibile;

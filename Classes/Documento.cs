@@ -10,7 +10,7 @@ namespace csharp_biblioteca_db
 
     class Autore : Persona
     {
-        public int iCodiceAutore;
+        public long iCodiceAutore;
         public string sMail;
         public Autore(string Nome, string Cognome, string sPosta) : base(Nome, Cognome)
         {
@@ -18,16 +18,16 @@ namespace csharp_biblioteca_db
             iCodiceAutore = GeneraCodiceAutore();
         }
 
-        public int GeneraCodiceAutore()
+        public long GeneraCodiceAutore()
         {
-            return 10000 + this.Nome.Length + this.Cognome.Length + this.sMail.Length;
+            return db.GetUniqueId();
         }
     }
 
 
     class Documento
     {
-        public int Codice { get; set; }
+        public long Codice { get; set; }
         public string Titolo { get; set; }
         public int Anno { get; set; }
         public string Settore { get; set; }
@@ -35,7 +35,7 @@ namespace csharp_biblioteca_db
         public List<Autore> Autori { get; set; }
         public Scaffale Scaffale { get; set; }
 
-        public Documento(int Codice, string Titolo, string Settore, string nomeScaffale)
+        public Documento(long Codice, string Titolo, string Settore, string nomeScaffale)
         {
             this.Codice = Codice;
             this.Titolo = Titolo;
@@ -71,7 +71,7 @@ namespace csharp_biblioteca_db
     {
         public int NumeroPagine { get; set; }
 
-        public Libro(int Codice, string Titolo, string Settore, int NumeroPagine, string Scaffale) : base(Codice, Titolo, Settore, Scaffale)
+        public Libro(long Codice, string Titolo, string Settore, int NumeroPagine, string Scaffale) : base(Codice, Titolo, Settore, Scaffale)
         {
             this.NumeroPagine = NumeroPagine;
         }

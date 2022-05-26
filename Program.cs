@@ -49,7 +49,7 @@ namespace csharp_biblioteca_db
             List<Autore> lAutoriLibro = new List<Autore>();
             Autore AutoreMioLibro = new Autore("Gianni", "Rivera", "gianni@gmail.com");
             lAutoriLibro.Add(AutoreMioLibro);
-            b.AggiungiLibro(2, "La grande cavalcata", "Avventura", 200, "SS2", lAutoriLibro);
+            b.AggiungiLibro(db.GetUniqueId(), "La grande cavalcata", "Avventura", 200, "SS2", lAutoriLibro);
             b.ScaffaliBiblioteca.ForEach(item => Console.WriteLine(item.Numero));
 
 
