@@ -38,6 +38,12 @@ namespace csharp_biblioteca_db
             MioLibro.Stato = Stato.Disponibile;
             db.libroAdd(MioLibro, lListaAutori);
         }
+        public void AggiungiDVD(long sCodice, string sTitolo, string sSettore, int iDurata, string sScaffale, List<Autore> lListaAutori)
+        {
+            DVD MioDVD = new DVD(sCodice, sTitolo, sSettore, iDurata, sScaffale);
+            MioDVD.Stato = Stato.Disponibile;
+            db.DVDAdd(MioDVD, lListaAutori);
+        }
 
         public int GestisciOperazioneBiblioteca(int iCodiceOperazione)
         {

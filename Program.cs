@@ -46,13 +46,32 @@ namespace csharp_biblioteca_db
             //b.AggiungiScaffale("SS1");
             //b.AggiungiScaffale("SS2");
             //b.AggiungiScaffale("SS3");
+
+            /*
+            Console.WriteLine("Inserisci un opzione");
+            Console.WriteLine("0-Aggiungi Autore  Libro");
+            Console.WriteLine("1-Aggiungi Autore  dvd");
+            Console.WriteLine("2-Stampa tutti i libri e autori");
+            */
+
             List<Autore> lAutoriLibro = new List<Autore>();
             Autore AutoreMioLibro = new Autore("Gianni", "Rivera", "gianni@gmail.com");
             lAutoriLibro.Add(AutoreMioLibro);
+            
             b.AggiungiLibro(db.GetUniqueId(), "La grande cavalcata", "Avventura", 200, "SS2", lAutoriLibro);
+            
             b.ScaffaliBiblioteca.ForEach(item => Console.WriteLine(item.Numero));
 
+            List<Autore> lAutoriLibro2 = new List<Autore>();
+            Autore AutoreMioLibro2 = new Autore("Gianni", "Rivera", "gianni@gmail.com");
+            lAutoriLibro2.Add(AutoreMioLibro2);
+            
+            b.AggiungiLibro(db.GetUniqueId(), "Divina Commedia", "Avventura", 200, "SS2", lAutoriLibro);
 
+            db.StampaLibriAutori();
+
+            b.ScaffaliBiblioteca.ForEach(item => Console.WriteLine(item.Numero));
+            
             /*
             Console.WriteLine("Lista operazioni:");
             Console.WriteLine("\t1: cercaLibro per autore");
